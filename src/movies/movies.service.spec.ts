@@ -25,12 +25,12 @@ describe('MoviesService', () => {
   });
 
   describe('getOne', () => {
-    service.create({
-      title: 'movie',
-      year: 2020,
-      genres: ['Action', 'Fantasy'],
-    });
     it('should return a movie', () => {
+      service.create({
+        title: 'movie',
+        year: 2020,
+        genres: ['Action', 'Fantasy'],
+      });
       const movie = service.getOne(1);
       expect(movie).toBeDefined();
       expect(movie.id).toEqual(1);
