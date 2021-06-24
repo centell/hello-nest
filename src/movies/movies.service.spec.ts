@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MoviesService } from './movies.service';
 import { NotFoundException } from '@nestjs/common';
+import exp from 'constants';
 
 describe('MoviesService', () => {
   let service: MoviesService;
@@ -42,6 +43,65 @@ describe('MoviesService', () => {
         expect(e).toBeInstanceOf(NotFoundException);
         expect(e.message).toEqual('Not Found with movie id 999');
       }
+    });
+  });
+
+  describe('deleteOne', () => {
+    it('deletes a movie', () => {
+      service.create({
+        title: 'movie',
+        year: 2020,
+        genres: ['Action', 'Fantasy'],
+      });
+      const allMovies = service.getAll().length;
+      service.deleteOne(1);
+      const afterDelete = service.getAll().length;
+      expect(afterDelete).toBeLessThan(allMovies);
+    });
+    it('should return a 404', () => {
+      try {
+        service.deleteOne(999);
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
+
+  describe('create', () => {
+    it('should crate a movie', () => {
+      const beforeCreate = service.getAll().length;
+      service.create({
+        title: 'movie',
+        year: 2020,
+        genres: ['Action', 'Fantasy'],
+      });
+      const afterCreate = service.getAll().length;
+      expect(afterCreate).toBeGreaterThan(beforeCreate);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a movie', () => {
+      service.create({
+        title: 'movie',
+        year: 2020,
+        genres: ['Action', 'Fantasy'],
+      });
+      service.updateOne(1, {
+        title: 'updated test',
+      });
+      const movie = service.getOne(1);
+      expect(movie.title).toEqual('updated test');
+    });
+    it('should throw a NotFoundException', () => {
+      try {
+        service.updateOne(999, {});
+      } catch (e) {
+        expect(e).toBeInstanceOf(NotFoundException);
+      }
+    });
+    afterAll(() => {
+      console.log('#');
     });
   });
 });
